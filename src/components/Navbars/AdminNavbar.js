@@ -37,8 +37,8 @@ import {
 } from "reactstrap";
 
 const AdminNavbar = (props) => {
-  // const data = useSelector((state) => state.reducer? state.reducer.users[0]:"");
-  // if (!data) return null;
+  const data = useSelector((state) => state.reducer? state.reducer.users?state.reducer.users[0]:"":"");
+  if (!data) return null;
   return (
     <>
       <Navbar className="navbar-top navbar-dark" expand="md" id="navbar-main">
@@ -76,7 +76,7 @@ const AdminNavbar = (props) => {
                   </span>
                   <Media className="ml-2 d-none d-lg-block">
                     <span className="mb-0 text-sm font-weight-bold">
-                      {/* {data?.Nombre} */}
+                      {data?.Nombre}
                     </span>
                   </Media>
                 </Media>

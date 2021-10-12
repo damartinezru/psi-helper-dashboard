@@ -16,6 +16,7 @@
 
 */
 const Chart = require("chart.js");
+const { useSelector } = require("react-redux");
 //
 // Chart extension for making the bars rounded
 // Code from: https://codepen.io/jedtrow/full/ygRYgo
@@ -308,6 +309,7 @@ function parseOptions(parent, options) {
 
 // Example 1 of Chart inside src/views/Index.js (Sales value - Card)
 let chartExample1 = {
+  datas:[],
   options: {
     scales: {
       yAxes: [
@@ -319,7 +321,7 @@ let chartExample1 = {
           ticks: {
             callback: function (value) {
               if (!(value % 10)) {
-                return "$" + value + "k";
+                return "$" + value + "mil";
               }
             },
           },
@@ -337,7 +339,7 @@ let chartExample1 = {
             content += label;
           }
 
-          content += "$" + yLabel + "k";
+          content += "$" + yLabel + "mil";
           return content;
         },
       },
@@ -345,18 +347,18 @@ let chartExample1 = {
   },
   data1: (canvas) => {
     return {
-      labels: ["May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+      labels: ["May", "Jun", "Jul", "Ago", "Sept", "Oct", "Nov", "Dic"],
       datasets: [
         {
           label: "Performance",
-          data: [0, 20, 10, 30, 15, 40, 20, 60, 60],
+          data: chartExample1.datas,
         },
       ],
     };
   },
   data2: (canvas) => {
     return {
-      labels: ["May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+      labels: ["May", "Jun", "Jul", "Ago", "Sept", "Oct", "Nov", "Dic"],
       datasets: [
         {
           label: "Performance",
@@ -369,13 +371,14 @@ let chartExample1 = {
 
 // Example 2 of Chart inside src/views/Index.js (Total orders - Card)
 let chartExample2 = {
+  datas:[],
   options: {
     scales: {
       yAxes: [
         {
           ticks: {
             callback: function (value) {
-              if (!(value % 10)) {
+              if (!(value % 2)) {
                 //return '$' + value + 'k'
                 return value;
               }
@@ -400,11 +403,11 @@ let chartExample2 = {
     },
   },
   data: {
-    labels: ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    labels: ["Familiar", "Psiquiatria", "Pareja"],
     datasets: [
       {
         label: "Sales",
-        data: [25, 20, 30, 22, 17, 29],
+        data: [],
         maxBarThickness: 10,
       },
     ],

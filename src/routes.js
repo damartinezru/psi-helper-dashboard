@@ -38,13 +38,13 @@ var routes = [
     component: Profile,
     layout: "/admin",
   },
-  {
-    path: "/tables",
-    name: "Tablas de Datos",
-    icon: "ni ni-bullet-list-67 text-red",
-    component: Tables,
-    layout: "/admin",
-  },
+  // {
+  //   path: "/tables",
+  //   name: "Tablas de Datos",
+  //   icon: "ni ni-bullet-list-67 text-red",
+  //   component: Tables,
+  //   layout: "/admin",
+  // },
   {
     path: "/login",
     name: "Login",

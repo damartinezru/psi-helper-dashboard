@@ -5,6 +5,7 @@ const config = {
     agenda:"agenda",
     metodopagos:"metodopago",
     filter: "/filter",
+    agenda:"agenda",
 }
 
 

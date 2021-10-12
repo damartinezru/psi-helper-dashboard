@@ -32,8 +32,13 @@ import {
 // core components
 import UserHeader from "components/Headers/UserHeader.js";
 import { useEffect } from "react";
+import { useSelector } from "react-redux";
 
 const Profile = () => {
+  const data = useSelector((state) =>
+    state.reducer ? (state.reducer.users ? state.reducer.users[0] : "") : ""
+  );
+  const list = data?.Especialidades;
   useEffect(() => {
     document.body.classList.add("bg-default");
 
@@ -41,6 +46,8 @@ const Profile = () => {
       document.body.classList.remove("bg-default");
     };
   }, []);
+
+  if (!data) return null;
   return (
     <>
       <UserHeader />
@@ -56,82 +63,68 @@ const Profile = () => {
                       <img
                         alt="..."
                         className="rounded-circle"
-                        src={
-                          require("../../assets/img/theme/card.png")
-                            .default
-                        }
+                        src={require("../../assets/img/theme/card.png").default}
                       />
                     </a>
                   </div>
                 </Col>
               </Row>
               <CardHeader className="text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
-                <div className="d-flex justify-content-between">
-                  <Button
-                    className="mr-4"
-                    color="info"
-                    href="#pablo"
-                    onClick={(e) => e.preventDefault()}
-                    size="sm"
-                  >
-                    Connect
-                  </Button>
-                  <Button
-                    className="float-right"
-                    color="default"
-                    href="#pablo"
-                    onClick={(e) => e.preventDefault()}
-                    size="sm"
-                  >
-                    Message
-                  </Button>
-                </div>
+                <div className="d-flex justify-content-between"></div>
               </CardHeader>
               <CardBody className="pt-0 pt-md-4">
                 <Row>
                   <div className="col">
                     <div className="card-profile-stats d-flex justify-content-center mt-md-5">
-                      <div>
-                        <span className="heading">22</span>
-                        <span className="description">Friends</span>
+                      <div
+                        style={{ display: data?.IsDoctor ? "block" : "none" }}
+                      >
+                        <span className="heading">
+                          {data?.IsDoctor? data?.Especialidades.length : ""}
+                        </span>
+                        <span className="description">Especialidades</span>
+                      </div>
+                      <div
+                        style={{ display: data?.IsDoctor ? "block" : "none" }}
+                      >
+                        <span className="heading">{data?.Calificaion }</span>
+                        <span className="description">
+                          Calificacion Promedio
+                        </span>
                       </div>
                       <div>
-                        <span className="heading">10</span>
-                        <span className="description">Photos</span>
-                      </div>
-                      <div>
-                        <span className="heading">89</span>
-                        <span className="description">Comments</span>
+                        <span className="heading">{data?.Numero_citas}</span>
+                        <span className="description">Numero de citas</span>
                       </div>
                     </div>
                   </div>
                 </Row>
                 <div className="text-center">
-                  <h3>
-                    Jessica Jones
-                    <span className="font-weight-light">, 27</span>
-                  </h3>
+                  <h3>{data?.Nombre}</h3>
                   <div className="h5 font-weight-300">
                     <i className="ni location_pin mr-2" />
-                    Bucharest, Romania
+                    {data?.Correo}
                   </div>
                   <div className="h5 mt-4">
                     <i className="ni business_briefcase-24 mr-2" />
-                    Solution Manager - Creative Tim Officer
+                    Telefono - {data?.Telefono}
                   </div>
-                  <div>
-                    <i className="ni education_hat mr-2" />
-                    University of Computer Science
+                  <div style={{ display: data?.IsDoctor ? "block" : "none" }}>
+                    {console.log(list)}
+                    {"Especialidades : "}
+                    (
+                    {list.length > 0
+                      ? list.map((obj) => {
+                          <i className="ni education_hat mr-2" />;
+                          return `${obj.Nombre},`;
+                        })
+                      : ""}
+                    )
                   </div>
                   <hr className="my-4" />
                   <p>
-                    Ryan — the name taken by Melbourne-raised, Brooklyn-based
-                    Nick Murphy — writes, performs and records all of his own
-                    music.
+                  Nunca te enseñaron cómo hablar con tus gestos, pero si fuiste enseñado a hablar con palabras -Paul Ekman
                   </p>
-                  <a href="#pablo" onClick={(e) => e.preventDefault()}>
-                    Show more
-                  </a>
                 </div>
               </CardBody>
             </Card>
@@ -141,24 +134,14 @@ const Profile = () => {
               <CardHeader className="bg-white border-0">
                 <Row className="align-items-center">
                   <Col xs="8">
-                    <h3 className="mb-0">My account</h3>
-                  </Col>
-                  <Col className="text-right" xs="4">
-                    <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      Settings
-                    </Button>
+                    <h3 className="mb-0">Mi cuenta</h3>
                   </Col>
                 </Row>
               </CardHeader>
               <CardBody>
                 <Form>
                   <h6 className="heading-small text-muted mb-4">
-                    User information
+                    Informacion de usuario
                   </h6>
                   <div className="pl-lg-4">
                     <Row>
@@ -168,13 +151,12 @@ const Profile = () => {
                             className="form-control-label"
                             htmlFor="input-username"
                           >
-                            Username
+                            Nombre de Usuario
                           </label>
                           <Input
                             className="form-control-alternative"
-                            defaultValue="lucky.jesse"
                             id="input-username"
-                            placeholder="Username"
+                            placeholder="Nombre de Usuario"
                             type="text"
                           />
                         </FormGroup>
@@ -185,7 +167,7 @@ const Profile = () => {
                             className="form-control-label"
                             htmlFor="input-email"
                           >
-                            Email address
+                            Correo
                           </label>
                           <Input
                             className="form-control-alternative"
@@ -203,14 +185,14 @@ const Profile = () => {
                             className="form-control-label"
                             htmlFor="input-first-name"
                           >
-                            First name
+                            Telefono
                           </label>
                           <Input
                             className="form-control-alternative"
-                            defaultValue="Lucky"
+                            defaultValue="315-2345-3223"
                             id="input-first-name"
-                            placeholder="First name"
-                            type="text"
+                            placeholder="315-2345-3223"
+                            type="number"
                           />
                         </FormGroup>
                       </Col>
@@ -220,109 +202,31 @@ const Profile = () => {
                             className="form-control-label"
                             htmlFor="input-last-name"
                           >
-                            Last name
+                            Contraseña
                           </label>
                           <Input
                             className="form-control-alternative"
-                            defaultValue="Jesse"
                             id="input-last-name"
-                            placeholder="Last name"
-                            type="text"
+                            placeholder="Password"
+                            type="password"
                           />
                         </FormGroup>
                       </Col>
                     </Row>
                   </div>
-                  <hr className="my-4" />
-                  {/* Address */}
-                  <h6 className="heading-small text-muted mb-4">
-                    Contact information
-                  </h6>
-                  <div className="pl-lg-4">
-                    <Row>
-                      <Col md="12">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-address"
-                          >
-                            Address
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            defaultValue="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09"
-                            id="input-address"
-                            placeholder="Home Address"
-                            type="text"
-                          />
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col lg="4">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-city"
-                          >
-                            City
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            defaultValue="New York"
-                            id="input-city"
-                            placeholder="City"
-                            type="text"
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col lg="4">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-country"
-                          >
-                            Country
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            defaultValue="United States"
-                            id="input-country"
-                            placeholder="Country"
-                            type="text"
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col lg="4">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-country"
-                          >
-                            Postal code
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            id="input-postal-code"
-                            placeholder="Postal code"
-                            type="number"
-                          />
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                  </div>
+
+
                   <hr className="my-4" />
                   {/* Description */}
-                  <h6 className="heading-small text-muted mb-4">About me</h6>
+                  <h6 className="heading-small text-muted mb-4">Acerca de mi</h6>
                   <div className="pl-lg-4">
                     <FormGroup>
-                      <label>About Me</label>
+                      <label>Acerca de mi</label>
                       <Input
                         className="form-control-alternative"
                         placeholder="A few words about you ..."
                         rows="4"
-                        defaultValue="A beautiful Dashboard for Bootstrap 4. It is Free and
-                        Open Source."
+                        defaultValue="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
                         type="textarea"
                       />
                     </FormGroup>

@@ -15,7 +15,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
+import React, { useEffect } from "react";
 import { useLocation, Route, Switch, Redirect } from "react-router-dom";
 // reactstrap components
 import { Container } from "reactstrap";
@@ -25,10 +25,14 @@ import AdminFooter from "components/Footers/AdminFooter.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 
 import routes from "routes.js";
+import { useDispatch, useSelector } from "react-redux";
+import { getEspecialidades } from "store/reducers/reducer";
 
 const Admin = (props) => {
   const mainContent = React.useRef(null);
   const location = useLocation();
+  const user = useSelector((state) => state.reducer.users?state.reducer.users[0]: "");
+  const list = user?.Especialidades;
 
   React.useEffect(() => {
     document.documentElement.scrollTop = 0;

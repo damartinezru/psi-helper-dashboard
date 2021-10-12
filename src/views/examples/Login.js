@@ -19,6 +19,7 @@
 // reactstrap components
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { Link, NavLink } from "react-router-dom";
 import {
   Button,
   Card,
@@ -95,9 +96,11 @@ const Login = () => {
                 </label>
               </div>
               <div className="text-center">
+              <NavLink to={"/"}>
                 <Button className="my-4" color="primary" type="button" onClick={(e) => {dispatch(getUsuarios({Correo:loginEmail, Password:loginPass}))}}>
                   Iniciar Sesion
                 </Button>
+              </NavLink> 
               </div>
             </Form>
           </CardBody>

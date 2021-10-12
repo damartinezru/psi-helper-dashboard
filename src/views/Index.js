@@ -15,7 +15,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 // node.js library that concatenates classes (strings)
 import classnames from "classnames";
 // javascipt plugin for creating charts
@@ -47,10 +47,25 @@ import {
 } from "variables/charts.js";
 
 import Header from "components/Headers/Header.js";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { getCostoCitas } from "store/reducers/reducer";
+import { getEsp } from "store/reducers/reducer";
+import { getCitas } from "store/reducers/reducer";
 
 const Index = (props) => {
   const [activeNav, setActiveNav] = useState(1);
+  const data = useSelector((state) => state.reducer.costo);
+  const data2 = useSelector((state) => state.reducer.esp);
+  const data3 = useSelector((state) => state.reducer.agenda);
   const [chartExample1Data, setChartExample1Data] = useState("data1");
+  const [famCount, setFamCount] = useState(0);
+  const [psiCount, setPsiCount] = useState(0);
+  const [pareCount, setPareCount] = useState(0);
+  const [countData, setCountData] = useState([]);
+  const [agendaData, setAgendaData] = useState([]);
+
+  const dispatch = useDispatch();
 
   if (window.Chart) {
     parseOptions(Chart, chartOptions());
@@ -61,6 +76,40 @@ const Index = (props) => {
     setActiveNav(index);
     setChartExample1Data("data" + index);
   };
+  const count = () => {
+    if (data2) {
+      const datalist = [...data2];
+      let yyy = datalist.map((obj) => obj.map((ob) => ob.Nombre));
+      let listaFamiliar = yyy.map((obj) => obj.filter((x) => x === "Familiar"));
+      const f = listaFamiliar.filter((lt, i) => lt[0] === "Familiar");
+      setFamCount(f.length);
+      let listaPsi = yyy.map((obj) => obj.filter((x) => x === "Pareja"));
+      const pp = listaPsi.filter((lt, i) => lt[0] === "Pareja");
+      setPsiCount(pp.length);
+      let listaPareja = yyy.map((obj) =>
+        obj.filter((x) => x === "Psiquiatria")
+      );
+      const ppp = listaPareja.filter((lt, i) => lt[0] === "Psiquiatria");
+      setPareCount(ppp.length);
+      setCountData([famCount, psiCount, pareCount]);
+    }
+  };
+  const tablas = () => {
+    if (data3) {
+      const agend = [...data3];
+      setAgendaData(agend);
+    }
+  };
+  useEffect(() => {
+    dispatch(getEsp());
+    dispatch(getCitas());
+    dispatch(getCostoCitas());
+    count();
+  }, [data2]);
+  useEffect(() => {
+    tablas();
+  }, [data3]);
+
   return (
     <>
       <Header />
@@ -73,9 +122,9 @@ const Index = (props) => {
                 <Row className="align-items-center">
                   <div className="col">
                     <h6 className="text-uppercase text-light ls-1 mb-1">
-                      Overview
+                      Vista Rapida
                     </h6>
-                    <h2 className="text-white mb-0">Sales value</h2>
+                    <h2 className="text-white mb-0">Costo de citas</h2>
                   </div>
                   <div className="col">
                     <Nav className="justify-content-end" pills>
@@ -87,21 +136,8 @@ const Index = (props) => {
                           href="#pablo"
                           onClick={(e) => toggleNavs(e, 1)}
                         >
-                          <span className="d-none d-md-block">Month</span>
+                          <span className="d-none d-md-block">Mensual</span>
                           <span className="d-md-none">M</span>
-                        </NavLink>
-                      </NavItem>
-                      <NavItem>
-                        <NavLink
-                          className={classnames("py-2 px-3", {
-                            active: activeNav === 2,
-                          })}
-                          data-toggle="tab"
-                          href="#pablo"
-                          onClick={(e) => toggleNavs(e, 2)}
-                        >
-                          <span className="d-none d-md-block">Week</span>
-                          <span className="d-md-none">W</span>
                         </NavLink>
                       </NavItem>
                     </Nav>
@@ -111,6 +147,9 @@ const Index = (props) => {
               <CardBody>
                 {/* Chart */}
                 <div className="chart">
+                  <div style={{ display: "none" }}>
+                    {(chartExample1.datas = data)}
+                  </div>
                   <Line
                     data={chartExample1[chartExample1Data]}
                     options={chartExample1.options}
@@ -126,15 +165,18 @@ const Index = (props) => {
                 <Row className="align-items-center">
                   <div className="col">
                     <h6 className="text-uppercase text-muted ls-1 mb-1">
-                      Performance
+                      Top Especialidadess
                     </h6>
-                    <h2 className="mb-0">Total orders</h2>
+                    <h2 className="mb-0">Total Especialidades</h2>
                   </div>
                 </Row>
               </CardHeader>
               <CardBody>
                 {/* Chart */}
                 <div className="chart">
+                  <div style={{ display: "none" }}>
+                    {(chartExample2.data.datasets[0].data = countData)}
+                  </div>
                   <Bar
                     data={chartExample2.data}
                     options={chartExample2.options}
@@ -150,181 +192,28 @@ const Index = (props) => {
               <CardHeader className="border-0">
                 <Row className="align-items-center">
                   <div className="col">
-                    <h3 className="mb-0">Page visits</h3>
-                  </div>
-                  <div className="col text-right">
-                    <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      See all
-                    </Button>
+                    <h3 className="mb-0">Agendamiento de citas</h3>
                   </div>
                 </Row>
               </CardHeader>
               <Table className="align-items-center table-flush" responsive>
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col">Page name</th>
-                    <th scope="col">Visitors</th>
-                    <th scope="col">Unique users</th>
-                    <th scope="col">Bounce rate</th>
+                    <th scope="col">Doctor</th>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Usuario</th>
+                    <th scope="col">Finalizada</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <th scope="row">/argon/</th>
-                    <td>4,569</td>
-                    <td>340</td>
-                    <td>
-                      <i className="fas fa-arrow-up text-success mr-3" /> 46,53%
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">/argon/index.html</th>
-                    <td>3,985</td>
-                    <td>319</td>
-                    <td>
-                      <i className="fas fa-arrow-down text-warning mr-3" />{" "}
-                      46,53%
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">/argon/charts.html</th>
-                    <td>3,513</td>
-                    <td>294</td>
-                    <td>
-                      <i className="fas fa-arrow-down text-warning mr-3" />{" "}
-                      36,49%
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">/argon/tables.html</th>
-                    <td>2,050</td>
-                    <td>147</td>
-                    <td>
-                      <i className="fas fa-arrow-up text-success mr-3" /> 50,87%
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">/argon/profile.html</th>
-                    <td>1,795</td>
-                    <td>190</td>
-                    <td>
-                      <i className="fas fa-arrow-down text-danger mr-3" />{" "}
-                      46,53%
-                    </td>
-                  </tr>
-                </tbody>
-              </Table>
-            </Card>
-          </Col>
-          <Col xl="4">
-            <Card className="shadow">
-              <CardHeader className="border-0">
-                <Row className="align-items-center">
-                  <div className="col">
-                    <h3 className="mb-0">Social traffic</h3>
-                  </div>
-                  <div className="col text-right">
-                    <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      See all
-                    </Button>
-                  </div>
-                </Row>
-              </CardHeader>
-              <Table className="align-items-center table-flush" responsive>
-                <thead className="thead-light">
-                  <tr>
-                    <th scope="col">Referral</th>
-                    <th scope="col">Visitors</th>
-                    <th scope="col" />
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <th scope="row">Facebook</th>
-                    <td>1,480</td>
-                    <td>
-                      <div className="d-flex align-items-center">
-                        <span className="mr-2">60%</span>
-                        <div>
-                          <Progress
-                            max="100"
-                            value="60"
-                            barClassName="bg-gradient-danger"
-                          />
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Facebook</th>
-                    <td>5,480</td>
-                    <td>
-                      <div className="d-flex align-items-center">
-                        <span className="mr-2">70%</span>
-                        <div>
-                          <Progress
-                            max="100"
-                            value="70"
-                            barClassName="bg-gradient-success"
-                          />
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Google</th>
-                    <td>4,807</td>
-                    <td>
-                      <div className="d-flex align-items-center">
-                        <span className="mr-2">80%</span>
-                        <div>
-                          <Progress max="100" value="80" />
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Instagram</th>
-                    <td>3,678</td>
-                    <td>
-                      <div className="d-flex align-items-center">
-                        <span className="mr-2">75%</span>
-                        <div>
-                          <Progress
-                            max="100"
-                            value="75"
-                            barClassName="bg-gradient-info"
-                          />
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">twitter</th>
-                    <td>2,645</td>
-                    <td>
-                      <div className="d-flex align-items-center">
-                        <span className="mr-2">30%</span>
-                        <div>
-                          <Progress
-                            max="100"
-                            value="30"
-                            barClassName="bg-gradient-warning"
-                          />
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
+                  {agendaData.map((obj) => (
+                    <tr>
+                      <td>{obj.Id_doctor.Nombre}</td>
+                      <td>{obj.Fecha}</td>
+                      <td>{obj.Id_usuario.Nombre}</td>
+                      <td>{obj.Finalizada? "Si": "No"}</td>
+                    </tr>
+                  ))}
                 </tbody>
               </Table>
             </Card>
